@@ -1,7 +1,11 @@
 import { defineStore } from 'pinia'
 import router from '@/router'
 
-import { accountLoginRequest } from '@/service/login/login'
+import {
+  accountLoginRequest,
+  requestUserInfoById,
+  reqestUserMenusByRoleId,
+} from '@/service/login/login'
 
 import { IAccount } from '@/service/login/types'
 
@@ -29,7 +33,16 @@ export const useUserStore = defineStore({
   getters: {},
   actions: {
     setToken(token: string) {
+      this.token = token
       localCache.setCache('token', token)
+    },
+    setUserInfo(userInfo: any) {
+      this.userInfo = userInfo
+      localCache.setCache('userInfo', userInfo)
+    },
+    setUserMenus(userMenus: any) {
+      this.userMenus = userMenus
+      localCache.setCache('userMenus', userMenus)
     },
 
     async accountLoginAction(params: IAccount) {
@@ -37,7 +50,20 @@ export const useUserStore = defineStore({
       const loginResult = await accountLoginRequest(params)
       // 获取并设置token
       const { id, token } = loginResult.data
+      // 保存token到state
       this.setToken(token)
+
+      // 2.请求用户信息
+      const userInfoResult = await requestUserInfoById(id)
+      const userInfo = userInfoResult.data
+      // 保存userInfo
+      this.setUserInfo(userInfo)
+
+      // 3.获取用户菜单
+      const userMenusResult = await reqestUserMenusByRoleId(id)
+      const userMenus = userMenusResult.data
+      // 保存userMenus
+      this.setUserMenus(userMenus)
 
       router.push('/main')
     },
