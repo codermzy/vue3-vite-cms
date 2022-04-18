@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, getCurrentInstance } from 'vue'
 import LoginAccount from './login-account.vue'
 
 // 当前标签页

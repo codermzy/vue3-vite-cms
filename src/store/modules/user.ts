@@ -10,6 +10,7 @@ import {
 import { IAccount } from '@/service/login/types'
 
 import localCache from '@/utils/cache'
+import { mapMenusToRoutes } from '@/utils/map-menus'
 
 interface IUserState {
   token?: string
@@ -20,6 +21,18 @@ interface IUserState {
 
 export function setupUser() {
   const userStore = useUserStore()
+
+  // 设置 token
+  const token = localCache.getCache('token')
+  token && userStore.setToken(token)
+
+  // 设置 userInfo
+  const userInfo = localCache.getCache('userInfo')
+  userInfo && userStore.setUserInfo(userInfo)
+
+  // 设置 userMenus
+  const userMenus = localCache.getCache('userMenus')
+  userMenus && userStore.setUserMenus(userMenus)
 }
 
 export const useUserStore = defineStore({
@@ -43,6 +56,11 @@ export const useUserStore = defineStore({
     setUserMenus(userMenus: any) {
       this.userMenus = userMenus
       localCache.setCache('userMenus', userMenus)
+
+      const routes = mapMenusToRoutes(userMenus)
+      routes.forEach((route) => {
+        router.addRoute('main', route)
+      })
     },
 
     async accountLoginAction(params: IAccount) {
