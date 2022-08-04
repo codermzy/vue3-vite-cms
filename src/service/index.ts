@@ -10,7 +10,6 @@ const zyRequest = new ZyRequest({
     requestInsterceptor(config) {
       // 拦截token请求
       const token = localCache.getCache('token')
-      console.log(config)
       if (token) {
         config.headers!.Authorization = `Bearer ${token}`
       }

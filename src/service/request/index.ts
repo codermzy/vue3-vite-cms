@@ -54,7 +54,6 @@ class ZYRequest {
       (res) => {
         // 将loading移除
         this.loading?.close()
-
         const data = res.data
         if (data.returnCode === '-1001') {
           console.log('请求失败~, 错误信息')
